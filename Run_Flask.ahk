@@ -1,34 +1,255 @@
 #MaxThreadsperHotKey 2
-;#IfWinActive, ahk_class POEWindowClass
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; README ;
+; Change timer for key 1-9 and t, when timer is 0, it's turned off
+; Change Double_QS for two quick silver flasks on 4 and 5
+; Change MyName to your character name, for kicking yourself function
+; Change StartupStr for keys to press when starting up the auto run/flask (righteous fire etc.)
+; Res = 0 for 1080p, 1 for 2k
+; MButton5 for auto run and auto flasks
+; MButton4 for control left click spam and pick up item spam (double z in between for item position reset)
+; Shift+Mbutton4 for shift left click spam
+; Alt+D for portal scroll, at inventory slot - left slot of the bottom right slot
+; ~ for exit to character selection (esc+click)
+; F4 for kicking yourself
+; F5 for hideout
+; F6 for delve
+; F7 for menagerie
+; Alt+R for script reload (after changing a timer and saving for example)
+; Alt+S for gem swap on main weapon
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-; Stash tab Scroll with Control + Mousewheel
-^WheelDown::Send {Right}
-^WheelUp::Send {Left}
+timer1 := 0000
+timer2 := 0000
+timer3 := 0000
+timer4 := 4000
+timer5 := 4000
+timer6 := 0000
+timer7 := 0000
+timer8 := 0000
+timer9 := 0000
+timer10 := 0000
+Double_QS := True
+MyName = Raining
+StartupStr := ""
+Res = 1
+GemPos = 6
 
-; Alt + Q to control click 11x5 inventory (1 row left)
-$!Q::
-BlockInput On 
-x := 1297
-y := 616
-CellWidth = 53
-Loop 11 {
-	Loop 5 { 
-		if GetKeyState("LButton", "P") = 1
-			break
-		MouseMove , x, y, 1
-		sleep 10
-		send ^{Click}	
-		y += CellWidth			
-	}
-	y := 616
-	x += CellWidth
+old_timer4 := timer4
+tmp_timer := timer4 + timer5
+if (Double_QS) {
+	timer4 := tmp_timer
+	timer5 := tmp_timer
 }
-BlockInput Off
+
+!T::
+MouseGetPos, xpos, ypos 
+MsgBox, The cursor is at X%xpos%, Y%ypos%.
 return
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+inSecWeap := False
+firstLoop := True
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Flask & Auto-run toggle
+XButton2::
+Toggle := !Toggle
+
+if (!Toggle) {
+	send, {LButton up}
+}
+else {
+	if (timer1 != 0) {
+		send, 1
+	}
+	if (timer2 != 0) {
+		send, 2
+	}
+	if (timer3 != 0) {
+		send, 3
+	}
+	if (timer4 != 0) {
+		send, 4
+	}
+	if (timer5 != 0 and !Double_QS) {
+		send, 5
+	}
+	if (timer6 != 0) {
+		send, 6
+	}
+	if (timer7 != 0) {
+		send, 7
+	}
+	if (timer8 != 0) {
+		send, 8
+	}
+	if (timer9 != 0) {
+		send, 9
+	}
+	if (timer10 != 0) {
+		send, t
+	}
+	send, %StartupStr%
+	send, {LButton down}
+}
+
+SetTimer, Loop1, % (Toggle and (timer1 != 0)) ? timer1: "Off"
+SetTimer, Loop2, % (Toggle and (timer2 != 0)) ? timer2: "Off"
+SetTimer, Loop3, % (Toggle and (timer3 != 0)) ? timer3: "Off"
+SetTimer, Loop4, % (Toggle and (timer4 != 0)) ? timer4: "Off"
+SetTimer, Loop5, % (Toggle and (timer5 != 0)) ? timer5: "Off"
+SetTimer, Loop6, % (Toggle and (timer6 != 0)) ? timer6: "Off"
+SetTimer, Loop7, % (Toggle and (timer7 != 0)) ? timer7: "Off"
+SetTimer, Loop8, % (Toggle and (timer8 != 0)) ? timer8: "Off"
+SetTimer, Loop9, % (Toggle and (timer9 != 0)) ? timer9: "Off"
+SetTimer, Loop10, % (Toggle and (timer10 != 0)) ? timer10: "Off"
+return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+/*
+;Whirling Blade - Fortify
+e::
+if (Toggle) {
+	if (!inSecWeap){
+		send x
+		inSecWeap := !inSecWeap
+	}
+	sleep 100
+	send 6
+	sleep 700
+	if (inSecWeap){
+		send x
+		inSecWeap := !inSecWeap
+	}
+}
+else {
+	send {e down}
+}
+return
+
+e up::
+if (!Toggle) {
+	send {e up}
+}
+return
+*/
+
+1::
+if (Toggle) {
+	send, 123
+}
+else {
+	send, {1 down}
+}
+return
+
+1 up::
+if (!Toggle) {
+	send {1 up}
+}	
+return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!S::
+if (Toggle) {
+	send, {LButton up}
+}
+MouseGetPos, xpos, ypos
+BlockInput, On
+send, F
+if (GemPos = 8) {
+	MouseClick, right, 1977, 494
+}
+else {
+	MouseClick, left, 2499, 825
+}
+if (GemPos = 1) {
+	MouseClick, left, 1808, 235
+}
+if (GemPos = 2) {
+	MouseClick, left, 1877, 235
+}
+if (GemPos = 3) {
+	MouseClick, left, 1877, 305
+}
+if (GemPos = 4) {
+	MouseClick, left, 1808, 305
+}
+if (GemPos = 5) {
+	MouseClick, left, 1808, 375
+}
+if (GemPos = 6) {
+	MouseClick, left, 1877, 375
+}
+if (GemPos = 7) {
+	MouseClick, left, 1877, 336
+}
+if (GemPos = 8) {
+	MouseClick, left, 2081, 478
+}
+if (GemPos = 8) {
+	MouseClick, left, 1977, 494
+}
+else {
+	MouseClick, left, 2499, 825
+}
+send, F
+BlockInput, Off
+
+mousemove, xpos, ypos
+if (Toggle) {
+	send, {LButton down}
+}
+return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!D::
+if (Toggle) {
+	send, {LButton up}
+}
+MouseGetPos, xpos, ypos
+BlockInput, On
+send, F
+
+; For skill level up
+; mousemove, 1294, 893
+; Click
+
+; For portal scroll
+if (Res = 0) {
+	MouseClick, right, 1827, 829
+}
+else {
+	MouseClick, right, 2430, 1099
+}
+
+send, F
+BlockInput, Off
+
+mousemove, xpos, ypos
+if (Toggle) {
+	send, {LButton down}
+}
+return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+`::
+if (Toggle) {
+	Toggle := False
+}
+BlockInput, On
+send, {Enter}{Ctrl Down}a{Ctrl Up}
+send, /exit
+send, {Enter}
+BlockInput, Off
+return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Auto-run left click modification
 LButton::
-if (Run) {
+if (Toggle) {
 	send, {LButton up}
 	send, {LButton down}
 } else {
@@ -37,7 +258,7 @@ if (Run) {
 return
 
 LButton Up::
-if (Run) {
+if (Toggle) {
 	send, {LButton up}
 	sleep 100
 	send, {LButton down}
@@ -46,6 +267,7 @@ if (Run) {
 }
 return
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 /*
 ; Insta skill / Flask before R skill
 r::
@@ -75,14 +297,17 @@ if (Toggle) {
 return
 */
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ; Kick myself
 F4::
 send, {Enter}{Ctrl Down}a{Ctrl Up}
-send, /kick ARainingC
+send, /kick
+send, {Space}
+send, %MyName%
 send, {Enter}
 return
 
-; Hideout / Delve / Menagerie
+; Hideout
 F5::
 send, {Enter}{Ctrl Down}a{Ctrl Up}
 send, /hideout
@@ -101,19 +326,19 @@ send, /menagerie
 send, {Enter}
 return
 
-; Hold Mouse4 to spam control left click
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Hold to spam control left click
 XButton1::
 SetTimer, CtrlLeft, 50
 return
 
 XButton1 up::
 SetTimer, CtrlLeft, OFF
-if (Run) {
+if (Toggle) {
 	send, {LButton down}
 }
 return
 
-; Hold Shift + Mouse4 to spam shift left click
 *XButton1::
 send, {Shift down}
 SetTimer, ShiftLeft, 50
@@ -124,116 +349,71 @@ SetTimer, ShiftLeft, OFF
 send, {Shift up}
 return
 
-; Flask & Auto-run toggle
-XButton2::
-if (Toggle) {
-	send, {LButton up}
-}
-Toggle := !Toggle
-Run := Toggle ; Comment this to disable auto-run
-if (Run) {
-	;send, A ; Comment this to disable Righteous Fire start-up
-	send, {LButton down}
-} else {
-	send, {LButton up}
-}
-
-; Comment to disable flask / skill
-SetTimer, Loop1, % (Toggle) ? 6000 : "Off"
-SetTimer, Loop2, % (Toggle) ? 6600 : "Off"
-SetTimer, Loop3, % (Toggle) ? 4800 : "Off"
-SetTimer, Loop4, % (Toggle) ? 6000 : "Off"
-SetTimer, Loop5, % (Toggle) ? 0 : "Off"
-;SetTimer, Loop6, % (Toggle) ? timer6 : "Off"
-;SetTimer, Loop7, % (Toggle) ? timer7 : "Off"
-;SetTimer, Loop8, % (Toggle) ? timer8 : "Off"
-;SetTimer, Loop9, % (Toggle) ? timer9 : "Off"
-;SetTimer, Loop10, % (Toggle) ? timer10 : "Off"
-
-return
-
-; Flask 1
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 Loop1:
 {
 		send, 1
 }
 return
 
-; Flask 2
 Loop2:
 {
 		send, 2
 }
 return
 
-; Flask 3
 Loop3:
 {
 		send, 3
 }
 return
 
-; Flask 4
 Loop4:
 {
 		send, 4
 }
 return
 
-; Quick Silver (Flask 5)
 Loop5:
 {
-		;if (Toggle) {
-		;	send, 3
-		;	sleep timer3
-		;}
-		;if (Toggle) {
-		;	send, 4
-		;	sleep timer4
-		;}
-		if (Toggle) {
-			send, 5
-			sleep 3500
+		if (Double_QS) {
+			sleep old_timer4
 		}
+		send, 5
 }
 return
 
-; Skill A
 Loop6:
 {
-		send, A
+		send, 6
 }
 return
 
-; Skill 7
 Loop7:
 {
-		Send 7
+		send, 7
 }
 return
 
-; Skill 8
 Loop8:
 {
 		send, 8
 }
 return
 
-; Skill 9
 Loop9:
 {
 		send, 9
 }
 return
 
-; Skill 0
 Loop10:
 {
-		send, 0
+		send, t
 }
 return
 
-; Helper Loops
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 CtrlLeft:
 {
 		send, z
@@ -246,4 +426,9 @@ ShiftLeft:
 {
 		send {Click}
 }
+return
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+!R::
+Reload
 return
